@@ -1,0 +1,39 @@
+# Base44 sandbox stack for PCProjects.
+#
+# Runs the FastAPI app straight from the cloned source in a plain Python image,
+# with uvicorn --reload, so edits show up in the preview without an image
+# rebuild. Dependencies are installed from requirements.txt on every start
+# (see AGENTS.md). The page is served on host port 3000, which is what the
+# preview shows.
+
+services:
+  web:
+    image: python:3.12-slim
+    working_dir: /app
+    command:
+      - sh
+      - -ec
+      - |
+        pip install --no-cache-dir -r requirements.txt
+        exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    labels:
+      base44.project: "PCProjects"
+      base44.kind: "web"
+      base44.port: "3000"
+      base44.docs: "/docs"
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=development
+    ports:
+      - "3000:8000"
+    init: true
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/info', timeout=3)"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    restart: on-failure

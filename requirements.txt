@@ -1,0 +1,8 @@
+# Runtime
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
+
+# Tests — run inside the running container:
+#   docker compose -f docker-compose.base44.yml exec -T web python -m pytest -q
+pytest==9.1.1
+httpx==0.28.1

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PCProjects</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: radial-gradient(circle at 20% 0%, #1e293b, #0b1120 60%);
+        color: #e2e8f0;
+        font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main {
+        width: 100%;
+        max-width: 560px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid #1e293b;
+        border-radius: 16px;
+        padding: 28px;
+      }
+      h1 { margin: 0 0 4px; font-size: 24px; }
+      h1 .dot { color: #34d399; }
+      p.sub { margin: 0 0 24px; color: #94a3b8; font-size: 14px; }
+      dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; margin: 0 0 24px; }
+      dt { color: #94a3b8; font-size: 14px; }
+      dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; }
+      footer { border-top: 1px solid #1e293b; padding-top: 16px; font-size: 13px; color: #94a3b8; }
+      a { color: #60a5fa; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1><span class="dot">&#9679;</span> PCProjects</h1>
+      <p class="sub">FastAPI service running from source with live reload.</p>
+      <dl>
+        <dt>Status</dt><dd id="status">loading&hellip;</dd>
+        <dt>Version</dt><dd id="version">&mdash;</dd>
+        <dt>Environment</dt><dd id="environment">&mdash;</dd>
+        <dt>Server time (UTC)</dt><dd id="time">&mdash;</dd>
+      </dl>
+      <footer>
+        JSON at <a href="/api/info">/api/info</a> &middot; API docs at <a href="/docs">/docs</a>
+      </footer>
+    </main>
+    <script>
+      const set = (id, value) => {
+        document.getElementById(id).textContent = value;
+      };
+      fetch("/api/info")
+        .then((response) => {
+          if (!response.ok) throw new Error(response.status);
+          return response.json();
+        })
+        .then((data) => {
+          set("status", "API reachable");
+          set("version", data.version);
+          set("environment", data.environment);
+          set("time", data.server_time_utc);
+        })
+        .catch(() => set("status", "API unreachable"));
+    </script>
+  </body>
+</html>
